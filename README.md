@@ -6,7 +6,7 @@
   - [使用](#使用)
 
 # 开始
-在https://github.com/wosiwq/groupname_synchttps://github.com/wosiwq/groupname_sync的基础上修了点小bug
+在https://github.com/wosiwq/groupname_synchttps://github.com/wosiwq/groupname_sync 的基础上修了点小bug
 ## 下载
 
 直接下载或clone本项目
