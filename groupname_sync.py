@@ -2,7 +2,7 @@ from hoshino import Service, priv
 from .data_source import *
 import aiohttp
 
-sv = Service('群昵称同步', manage_priv=priv.SUPERUSER, enable_on_default=False)
+sv = Service('群昵称同步', manage_priv=priv.SUPERUSER, enable_on_default=True)
 
 name_old = None
 group_list = {}
@@ -42,7 +42,7 @@ async def groupname_sync(bot, ev):
 
     if len(yobot_url) == 0:
         await bot.finish(ev, '获取api地址失败，请检查配置')
-    if not get_db_path():
+    if len(db_path) == 0:
         await bot.finish(ev, '获取数据库路径失败，请检查配置')
     try:
         apikey = get_apikey(gid)
@@ -59,15 +59,16 @@ async def groupname_sync(bot, ev):
         # result['msg'] = '无法访问API，请检查yobot服务器状态'
         print('无法访问API，请检查yobot服务器状态')
         return
-
-    if data['challenges'][len(data['challenges']) - 1]['health_ramain'] != 0:
-        name_new = str(data['challenges'][len(data['challenges']) - 1]['cycle']) + '-' + str(
-            data['challenges'][len(data['challenges']) - 1]['boss_num'])
+    if len(data['challenges']) == 0:
+         name_new = '（会战休战中）'
+    elif data['challenges'][len(data['challenges']) - 1]['health_ramain'] != 0:
+        name_new = '（' + str(data['challenges'][len(data['challenges']) - 1]['cycle']) + '周目-' + str(
+            data['challenges'][len(data['challenges']) - 1]['boss_num']) + '王）'
     elif data['challenges'][len(data['challenges']) - 1]['boss_num'] == 5:
-        name_new = str(data['challenges'][len(data['challenges']) - 1]['cycle'] + 1) + '-1'
+        name_new = '（' + str(data['challenges'][len(data['challenges']) - 1]['cycle'] + 1) + '周目-1王）'
     else:
-        name_new = str(data['challenges'][len(data['challenges']) - 1]['cycle']) + '-' + str(
-            data['challenges'][len(data['challenges']) - 1]['boss_num'] + 1)
+        name_new = '（' + str(data['challenges'][len(data['challenges']) - 1]['cycle']) + '周目-' + str(
+            data['challenges'][len(data['challenges']) - 1]['boss_num'] + 1) + '王）'
     if name_old == name_new:
         return
     else:
